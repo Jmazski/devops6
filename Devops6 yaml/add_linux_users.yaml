@@ -1,0 +1,13 @@
+---
+- name: Add loopback interfaces for customers
+  hosts: vyos_router
+  gather_facts: no
+  vars_files:
+    - vyos_customers.yaml
+  tasks:
+    - name: Configure loopback interfaces
+      vyos_config:
+        lines:
+          - "set interfaces loopback lo address {{ item.ip }}/32"
+          - "set interfaces loopback lo description '{{ item.description }}'"
+      loop: "{{ interfaces }}"

@@ -1,0 +1,19 @@
+---
+- name: Add users for customers
+  hosts: linux_servers
+  become: true
+  vars_files:
+    - linux_users.yaml
+  tasks:
+    - name: Ensure group exists
+      group:
+        name: cloud_users
+        state: present
+    - name: Add new users
+      user:
+        name: "{{ item.name }}"
+        group: "{{ item.group }}"
+        password: "{{ item.password | password_hash('sha512') }}"
+        shell: "{{ item.shell }}"
+        state: present
+      loop: "{{ users }}"
